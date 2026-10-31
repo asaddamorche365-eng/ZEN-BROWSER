@@ -204,6 +204,9 @@ class WebPageClient(
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
         Timber.v("$ihs : shouldInterceptRequest - ${if (request.isForMainFrame) "Main frame" else "Resource"} - ${request.url}")
 
+        // ZEN: serve the bundled Z1 app from assets
+        Z1Assets.intercept(activity, request.url)?.let { return it }
+
         // First, check if ad blocker blocks this request (returns dummy response if blocked, null if not)
         val response = adBlock.shouldBlock(request, currentUrl)
         val wasBlocked = response != null
